@@ -5,51 +5,44 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "expo-router";
+import { useDispatch } from "react-redux";
 import { auth } from "../../firebaseConfig";
-
+import { addUser } from "../redux/slice/Authslice";
 import { useRouter } from "expo-router";
-const Login = ({ setIsLoggedIn }) => {
+
+const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const dispatch = useDispatch();
   const router = useRouter();
 
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
   };
+
   const handleSubmit = async () => {
     try {
-      // Sign in user with email and password
       const userCredential = await signInWithEmailAndPassword(
         auth,
         formData.email,
         formData.password
       );
       const user = userCredential.user;
-      setIsLoggedIn(true);
+      dispatch(addUser(user));
 
       console.log(user);
-
-      // Redirect to homepage
       router.push("/about");
     } catch (error) {
-      // Alert error message
-      alert(error.message);
+      Alert.alert("Error", error.message);
     }
   };
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        router.push("/about");
-      }
-    });
-    return () => unsubscribe();
-  }, []);
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton}>
@@ -141,7 +134,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 18,
-    color: "#D97706", // Yellow color
+    color: "#D97706",
     marginBottom: 8,
   },
   input: {
@@ -151,10 +144,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     backgroundColor: "white",
-    color: "#D97706", // Yellow text color
+    color: "#D97706",
   },
   loginButton: {
-    backgroundColor: "#1E3A8A", // Dark blue color
+    backgroundColor: "#1E3A8A",
     paddingVertical: 12,
     borderRadius: 8,
   },
@@ -169,11 +162,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   registerText: {
-    color: "#D97706", // Yellow text color
+    color: "#D97706",
     fontSize: 16,
   },
   registerLink: {
-    color: "#1E40AF", // Blue color for link
+    color: "#1E40AF",
   },
 });
 

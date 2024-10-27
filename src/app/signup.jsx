@@ -9,15 +9,35 @@ import React, { useEffect, useState } from "react";
 import { Link, router } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
-const Signup = (setIsLoggedIn) => {
+import { useDispatch } from "react-redux";
+import { addUser } from "../redux/slice/Authslice"; 
+const Signup = () => {
   const [formData, setFormData] = useState({
     email: "",
     name: "",
     password: "",
   });
+  const dispatch = useDispatch();
   const handleInputChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
   };
+  // const handleSubmit = async () => {
+  //   try {
+  //     const userCredential = await createUserWithEmailAndPassword(
+  //       auth,
+  //       formData.email,
+  //       formData.password
+  //     );
+  //     const user = userCredential.user;
+  //     setIsLoggedIn(true);
+  //     console.log(user.email);
+  //   } catch (error) {
+  //     // error message
+  //     alert(error.message);
+  //   }
+  // };
+
+
   const handleSubmit = async () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -26,13 +46,15 @@ const Signup = (setIsLoggedIn) => {
         formData.password
       );
       const user = userCredential.user;
-      setIsLoggedIn(true);
-      console.log(user.email);
+      dispatch(addUser(user));
+
+      console.log(user);
+      router.push("/about");
     } catch (error) {
-      // error message
-      alert(error.message);
+      Alert.alert("Error", error.message);
     }
   };
+
 
   useEffect(() => {
     const result = auth.onAuthStateChanged((user) => {

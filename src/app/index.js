@@ -1,52 +1,48 @@
-import {SafeAreaView} from "react-native";
-import React, { useState, useEffect } from "react";
+
+import { SafeAreaView } from "react-native";
+import React, { useEffect } from "react";
 import { auth } from "../../firebaseConfig";
 import Signup from "./signup";
 import Login from "./login";
 import About from "./about";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View } from "react-native-web";
+import { useSelector, useDispatch } from "react-redux";
+import { removeUser } from "../redux/slice/Authslice";
+import Cart from "../component/cart";
 const Stack = createNativeStackNavigator();
 
 const Home = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showLogin, setShowLogin] = useState(true);
+  const { isLoggedIn } = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setIsLoggedIn(!!user);
+      if (!user) {
+        dispatch(removeUser());
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [dispatch]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      
       <Stack.Navigator>
         {isLoggedIn ? (
-         <View>
-           <Stack.Screen name="About" component={About} />
-           {/* <Stack.Screen name="Product" component={Product} /> */}
-         </View>
-        ) : showLogin ? (
-          <Stack.Screen name="Login">
-            {() => <Login setIsLoggedIn={setIsLoggedIn} />}
-          </Stack.Screen>
+          <>
+            <Stack.Screen name="about" component={About} />
+           <Stack.Screen name="cart" component={Cart}/>
+          </>
         ) : (
-          <Stack.Screen name="Signup">
-            {() => <Signup setIsLoggedIn={setIsLoggedIn} />}
-          </Stack.Screen>
+          <>
+            <Stack.Screen name="login" component={Login} />
+            <Stack.Screen name="signup" component={Signup} />
+          </>
         )}
       </Stack.Navigator>
-     
     </SafeAreaView>
   );
 };
 
 export default Home;
-
-
-
-
-
-

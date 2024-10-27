@@ -32,6 +32,7 @@
       "eas": {
         "projectId": "100c265e-fef3-43ed-8133-71cf346f9da5"
       }
-    }
+    },
+    "entryPoint": "./App.js" 
   }
 }

@@ -1,15 +1,43 @@
-import { View, Text, Image, StyleSheet,Pressable} from "react-native";
+import { View, Text, Image, StyleSheet, Pressable, ScrollView } from "react-native";
 import React from "react";
 import { productsItems } from "./data";
-
-
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/slice/cartSlice";
+import {offerData} from "../component/data"
 const Product = () => {
+  const dispatch = useDispatch();
+  const handleAddToCart = (item) => {
+    dispatch(addToCart(item));
+    console.log(item);
+  };
   return (
     <View style={styles.container}>
- 
-      <Text style={styles.title}>Type of Product</Text>
+   
+      <View style={styles.offerfoot}>
+   
+      {offerData.map((itemImg, index) => {
+        return (
+          itemImg.image && (
+            <View key={index}>
+              <Image
+                source={{ uri: itemImg.image }}
+                style={styles.productImage}
+              />
+              <View>
+                <Text style={styles.productnameOffer}>
+                  {itemImg.name}
+                </Text>
+                <Text style={styles.productnameOfferUTo}>
+                  {itemImg.offer}
+                </Text>
+              </View>
+            </View>
+          )
+        );
+      })}
+
+      </View>
       <View style={styles.productContainer}>
-        <Text style={styles.label}>Name</Text>
         {productsItems.map((item, index) => (
           <View key={index} style={styles.productItem}>
             <Text style={styles.productName}>{item.name}</Text>
@@ -17,48 +45,59 @@ const Product = () => {
               <Image
                 source={{ uri: item.URL }}
                 style={styles.productImage}
-                // resizeMode="contain"
+                
               />
             )}
-            {/* <View style={StyleSheet.priceaddbutton}>
-
-             <Text>
-             ₹{item.price}
-              </Text>
-       <Pressable style={styles.button}>
-      <Text style={styles.text}>Add</Text>
-    </Pressable>
-
-            </View> */}
-
-<View style={styles.priceAddButton}>
-  <Text style={styles.priceText}>₹{item.price}</Text>
-  <Pressable style={styles.button}>
-    <Text style={styles.buttonText}>Add</Text>
-  </Pressable>
-</View>
-
+            <View style={styles.priceAddButton}>
+              <Text style={styles.priceText}>₹{item.price}</Text>
+              <Pressable style={styles.button}    onPress={() => handleAddToCart(item)}>
+                <Text style={styles.buttonText}>Add</Text>
+              </Pressable>
+            </View>
           </View>
         ))}
       </View>
-   
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 4,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
+  offerfoot:{
+     flex: 1,
+     flexDirection:'row',
+     padding:4,
+     gap:4,
+position:'relative',
+flexWrap: 'wrap',
+
   },
+  productnameOffer:{
+    position:'absolute',
+    top:-70,
+    fontSize:16,
+    color:'white',
+    fontStyle:'italic',
+
+
+
+
+  },
+  productnameOfferUTo:{
+    position:'absolute',
+    top:-30,
+    fontSize:'bold',
+    fontSize:16,
+    color:'white',
+  },
+ 
   productContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
     marginTop: 10,
-    alignItems: "center",
-    justifyContent: "center",
   },
   label: {
     fontSize: 16,
@@ -69,15 +108,15 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 8,
     backgroundColor: "#f3f3f3",
-    
   },
   productName: {
     fontSize: 16,
     fontWeight: "600",
   },
   productImage: {
-    width: 200,
-    height: 200,
+    width: 140,
+    height: 140,
+    padding: 8,
     textAlign: "center",
     alignContent: "center",
     justifyContent: "center",
@@ -106,5 +145,3 @@ const styles = StyleSheet.create({
 });
 
 export default Product;
-
-
